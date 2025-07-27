@@ -1,0 +1,10 @@
+{
+    "apiPort": 8899,
+    "dispPort": 7500,
+    "roomPort": 9900,
+    "baseHost": "http://localhost",
+    "cdnHost": "https://staticvelaire.vercel.app/public",
+    "dispHost": "http://localhost:9000",
+    "gameHost": "172.93.100.26",
+    "gamePort": 19130
+}

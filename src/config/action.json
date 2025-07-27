@@ -1,0 +1,128 @@
+[
+  {
+    "actionId": 8,
+    "actionName": "Monday Login",
+    "quantity": 1,
+    "dateType": "day",
+    "condition": "1",
+    "actionType": "common",
+    "actionFlag": "monday_login",
+    "status": 1,
+    "actionRewards": [
+      {
+        "rewardName": "1500",
+        "rewardType": "gold",
+        "quantity": 1500,
+        "rewardPic": "http://static.sandboxol.com/sandbox/activity/treasurebox/coin.png"
+      }
+    ]
+  },
+  {
+    "actionId": 10,
+    "actionName": "Tuesday Login",
+    "quantity": 1,
+    "dateType": "day",
+    "condition": "2",
+    "actionType": "common",
+    "actionFlag": "tuesday_login",
+    "status": 1,
+    "actionRewards": [
+      {
+        "rewardName": "25",
+        "rewardType": "diamonds",
+        "quantity": 25,
+        "rewardPic": "https://static-xenox-service.vercel.app/currencies/ic_diamond_8_ultra.png"
+      }
+    ]
+  },
+  {
+    "actionId": 12,
+    "actionName": "Wednesday Login",
+    "quantity": 1,
+    "dateType": "day",
+    "condition": "3",
+    "actionType": "common",
+    "actionFlag": "wednesday_login",
+    "status": 1,
+    "actionRewards": [
+      {
+        "rewardName": "2500",
+        "rewardType": "gold",
+        "quantity": 2500,
+        "rewardPic": "http://static.sandboxol.com/sandbox/activity/treasurebox/coin.png"
+      }
+    ]
+  },
+  {
+    "actionId": 14,
+    "actionName": "Thursday Login",
+    "quantity": 1,
+    "dateType": "day",
+    "condition": "4",
+    "actionType": "common",
+    "actionFlag": "thursday_login",
+    "status": 1,
+    "actionRewards": [
+      {
+        "rewardName": "10",
+        "rewardType": "diamonds",
+        "quantity": 10,
+        "rewardPic": "https://static-xenox-service.vercel.app/currencies/ic_diamond_8_ultra.png"
+      }
+    ]
+  },
+  {
+    "actionId": 16,
+    "actionName": "Friday Login",
+    "quantity": 1,
+    "dateType": "day",
+    "condition": "5",
+    "actionType": "common",
+    "actionFlag": "friday_login",
+    "status": 1,
+    "actionRewards": [
+      {
+        "rewardName": "15",
+        "rewardType": "diamonds",
+        "quantity": 15,
+        "rewardPic": "https://static-xenox-service.vercel.app/currencies/ic_diamond_8_ultra.png"
+      }
+    ]
+  },
+  {
+    "actionId": 18,
+    "actionName": "Saturday Login",
+    "quantity": 1,
+    "dateType": "day",
+    "condition": "6",
+    "actionType": "common",
+    "actionFlag": "saturday_login",
+    "status": 1,
+    "actionRewards": [
+      {
+        "rewardName": "5000",
+        "rewardType": "gold",
+        "quantity": 5000,
+        "rewardPic": "http://static.sandboxol.com/sandbox/activity/treasurebox/coin.png"
+      }
+    ]
+  },
+  {
+    "actionId": 20,
+    "actionName": "Sunday Login",
+    "quantity": 1,
+    "dateType": "day",
+    "condition": "7",
+    "actionType": "common",
+    "actionFlag": "sunday_login",
+    "status": 1,
+    "actionRewards": [
+      {
+        "rewardName": "50",
+        "rewardType": "diamonds",
+        "quantity": 50,
+        "rewardPic": "https://static-xenox-service.vercel.app/currencies/ic_diamond_pack.png"
+      }
+    ]
+  }
+]

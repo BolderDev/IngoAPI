@@ -1,0 +1,4 @@
+{
+    "@interval": "If two clan/friend requests have an interval higher to this value: renew the request (Current value represents one month in days)",
+    "interval": 30
+}

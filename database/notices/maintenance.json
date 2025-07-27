@@ -1,0 +1,8 @@
+{
+    "id": 0,
+    "title": "Under Maintenance",
+    "content": "We are suffering through a big bug found in the api code, this bugs not let load any component of the game like - profile, bcubes, coins, avatars, clans, friends and games... We are trying to fix the bug as soon as possible... duration : 8:00 PM (IST) to 9:00 AM (IST). Prize after the maintenance : 350 icubes and 1000 coins, have patience...",
+    "isShow": false,
+    "isShowInGame": false,
+    "updateTime": 0
+}

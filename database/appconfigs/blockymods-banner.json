@@ -1,0 +1,24 @@
+[
+    {
+        "id": 0,
+        "image": "http://192.168.99.116:8899/database/files/1688044105280-40710389.jpg",
+        "url": "",
+        "titles": {},
+        "isInside": false,
+        "isTest": false,
+        "title": "",
+        "version": 0,
+        "isFullScreen": false
+    },
+    {
+        "id": 0,
+        "image": "http://192.168.99.116:8899/database/files/1688045748748-43086546.jpg",
+        "url": "",
+        "titles": {},
+        "isInside": false,
+        "isTest": false,
+        "title": "",
+        "version": 0,
+        "isFullScreen": false
+    }
+]

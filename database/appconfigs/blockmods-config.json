@@ -1,0 +1,28 @@
+{
+    "isShowActivity": true,
+    "activityVersionCode": 0,
+    "isShowPartyInvite": false,
+    "newGratitudeUrl": "http://192.168.99.116:8899/",
+    "adsConfig": {
+        "mainAdsCD": 300.0,
+        "mainAdsGray": 0.0,
+        "gameDetailAdsCD": 1800.0,
+        "gameDetailAdsGray": 0.0,
+        "midwayAdGray": 0.0,
+        "finalAdGray": 0.0,
+        "hallAdGray": 0.0,
+        "enterDetailGray": 0.0,
+        "clickTabGray": 0.0
+    },
+    "specialAdsConfig": {
+        "mainAdsCD": 300.0,
+        "mainAdsGray": 0.0,
+        "gameDetailAdsCD": 7200.0,
+        "gameDetailAdsGray": 0.0,
+        "midwayAdGray": 0.0,
+        "finalAdGray": 0.0,
+        "hallAdGray": 0.0,
+        "enterDetailGray": 0.0,
+        "clickTabGray": 0.0
+    }
+}

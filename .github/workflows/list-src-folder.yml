@@ -1,0 +1,31 @@
+name: Lint src folder
+
+on:
+  push:
+    branches: [main, master, GhostWasFound13-patch-1]
+  pull_request:
+    branches: [main, master, GhostWasFound13-patch-1]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'  # or whatever Node.js version you're using
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run ESLint on src/
+        run: |
+          if [ -f .eslintrc.js ] || [ -f .eslintrc.json ]; then
+            npx eslint src --ext .js,.ts
+          else
+            echo "No ESLint config found, skipping lint."
+          fi

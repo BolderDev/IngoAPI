@@ -1,0 +1,59 @@
+{
+  "name": "bmf-api",
+  "version": "1.0.1-patch",
+  "description": "unknown package",
+  "main": "src/app.js",
+  "type": "commonjs",
+  "scripts": {
+    "start:server": "nodemon --ignore database src/app.js",
+    "start": "node src/app.js"
+  },
+  "author": "BytePulse",
+  "_moduleAliases": {
+    "@src": "src/",
+    "@constants": "src/constants",
+    "@common": "src/common",
+    "@config": "src/config",
+    "@models": "src/models",
+    "@user-service": "src/services/user",
+    "@game-service": "src/services/game",
+    "@account-service": "src/services/account",
+    "@friend-service": "src/services/friend",
+    "@mail-service": "src/services/mail",
+    "@decoration-service": "src/services/decoration",
+    "@pay-service": "src/services/pay",
+    "@clan-service": "src/services/clan",
+    "@shop-service": "src/services/shop",
+    "@msg-service": "src/services/msg",
+    "@activity-service": "src/services/activity",
+    "@discord-service": "src/services/discord",
+    "@dispatcher": "src/dispatcher",
+    "@room": "src/dispatcher/room",
+    "@schemas": "src/schemas"
+  },
+  "dependencies": {
+    "axios": "^1.6.7",
+    "bg-constants": "^1.0.0",
+    "chalk": "^4.1.2",
+    "compression": "^1.8.0",
+    "express": "^4.18.2",
+    "express-rate-limit": "^7.5.0",
+    "figlet": "^1.8.1",
+    "fs": "^0.0.1-security",
+    "helmet": "^8.1.0",
+    "mariadb": "^3.2.3",
+    "module-alias": "^2.2.3",
+    "mongoose": "^8.2.4",
+    "multer": "^1.4.5-lts.1",
+    "nodemailer": "^7.0.3",
+    "quick.db": "^9.1.7",
+    "redis": "^4.6.13",
+    "resend": "^4.5.2",
+    "sql.js": "^1.13.0",
+    "util": "^0.12.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  },
+  "license": "UNLICENSED"
+}

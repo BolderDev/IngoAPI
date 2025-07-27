@@ -1,0 +1,38 @@
+[
+    {
+        "country": "America",
+        "headPic": "http://static.sandboxol.com/sandbox/activity/icon/renwu5.png",
+        "nickName": "Wtf123",
+        "sex": "1"
+    },
+    {
+        "country": "China",
+        "headPic": "http://static.sandboxol.com/sandbox/activity/icon/renwu3.png",
+        "nickName": "E",
+        "sex": "2"
+    },
+    {
+        "country": "Russia",
+        "headPic": "http://static.sandboxol.com/sandbox/activity/icon/renwu2.png",
+        "nickName": "What",
+        "sex": "1"
+    },
+    {
+        "country": "England",
+        "headPic": "http://static.sandboxol.com/sandbox/activity/icon/renwu4.png",
+        "nickName": "No",
+        "sex": "2"
+    },
+    {
+        "country": "Brazil",
+        "headPic": "http://static.sandboxol.com/sandbox/activity/icon/renwu1.png",
+        "nickName": "Bruh",
+        "sex": "1"
+    },
+    {
+        "country": "Vietnam",
+        "headPic": "http://static.sandboxol.com/sandbox/activity/icon/renwu6.png",
+        "nickName": "Real",
+        "sex": "2"
+    }
+]

@@ -1,0 +1,17 @@
+[
+    {
+        "image": "http://static.sandboxol.com/sandbox/activity/banner/bgbedwars.jpg",
+        "title": "Bed Wars 2! New enchantment tables! New maps! ",
+        "packageName": "com.sandboxol.blockymods"
+    },
+    {
+        "image": "http://static.sandboxol.com/sandbox/activity/banner/bgeggwars.jpg",
+        "title": "Egg Wars 2! New props and maps! ",
+        "packageName": "com.sandboxol.blockymods"
+    },
+    {
+        "image": "http://static.sandboxol.com/sandbox/activity/banner/bgblockmango.jpg",
+        "title": "About 30 games! More fun, more friends! All in BlockMan GO!",
+        "packageName": "com.sandboxol.blockymods"
+    }
+]

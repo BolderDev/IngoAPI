@@ -1,0 +1,20 @@
+{
+    "localPath": "database",
+    "storage": "database/files",
+    "mariadb": {
+        "host": "localhost",
+        "port": 3306,
+        "user": "root",
+        "password": "123456",
+        "database": "bmfdb",
+        "connectionLimit": 30
+    },
+    "redis": {
+        "username": "test",
+        "password": "AS9bAAIjcDE2MzA4NDExNTkyYTE0ZWIwYWMzZWU1ZjUyNjI5ZDE4N3AxMA",
+        "socket": {
+             "host": "rediss://default:AS9bAAIjcDE2MzA4NDExNTkyYTE0ZWIwYWMzZWU1ZjUyNjI5ZDE4N3AxMA@driven-haddock-12123.upstash.io:6379",
+            "port": 6379
+        }
+    }
+}

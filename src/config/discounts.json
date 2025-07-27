@@ -1,0 +1,6 @@
+{
+    "@vipShopDiscount": "Provides a 10% discount for any dress purchase",
+    "vipShopDiscount": 10,
+    "@mvpShopDiscount": "Provides a 20% discount for any dress purchase",
+    "mvpShopDiscount": 20
+}

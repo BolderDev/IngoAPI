@@ -1,0 +1,32 @@
+[
+    {
+        "image": "http://static.sandboxol.com/sandbox/activity/banner/bg_banner_tribe_default.png",
+        "image_zh": "http://static.sandboxol.com/sandbox/activity/banner/bg_banner_tribe_default.png",
+        "title": "Get exclusive avatars",
+        "title_zh": "获取免费装扮"
+    },
+    {
+        "image": "http://static.sandboxol.com/sandbox/activity/banner/bg_banner_tribe_one.png",
+        "image_zh": "http://static.sandboxol.com/sandbox/activity/banner/bg_banner_tribe_one.png",
+        "title": "Find friends who share the same interest",
+        "title_zh": "寻找志同道合的朋友"
+    },
+    {
+        "image": "http://static.sandboxol.com/sandbox/activity/banner/bg_banner_tribe_two.png",
+        "image_zh": "http://static.sandboxol.com/sandbox/activity/banner/bg_banner_tribe_two_zh.png",
+        "title": "Talk with your friends at any time",
+        "title_zh": "随时与您的朋友交谈"
+    },
+    {
+        "image": "http://static.sandboxol.com/sandbox/activity/banner/bg_banner_tribe_three.png",
+        "image_zh": "http://static.sandboxol.com/sandbox/activity/banner/bg_banner_tribe_three.png",
+        "title": "Fight for the honor of the clan",
+        "title_zh": "为部落而战"
+    },
+    {
+        "image": "http://static.sandboxol.com/sandbox/activity/banner/bg_banner_tribe_four.png",
+        "image_zh": "http://static.sandboxol.com/sandbox/activity/banner/bg_banner_tribe_four.png",
+        "title": "More games such as clan war will come soon",
+        "title_zh": "部落战争游戏即将推出"
+    }
+]
