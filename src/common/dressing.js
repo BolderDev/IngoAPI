@@ -1,7 +1,6 @@
 const multer = require("@common/multer");
 const constants = require("@common/constants");
 const logger = require("@common/logger");
-
 const config = require("@config/host");
 
 const dressingTypes = {
@@ -66,14 +65,19 @@ function init() {
             break;
         }
 
-        decorationCategories[categoryId] ??= [];
+        // Fallback if ??= unsupported
+        if (!decorationCategories[categoryId]) {
+            decorationCategories[categoryId] = [];
+        }
 
         const data = JSON.parse(response.content);
         for (let item of data) {
-            item.iconUrl = item.iconUrl.replace(
-                "{base}",
-                `${config.cdnHost}/database/files/icons`
-            );
+            if (typeof item.iconUrl === "string") {
+                item.iconUrl = item.iconUrl.replace(
+                    "{base}",
+                    `${config.cdnHost}/database/files/icons`
+                );
+            }
         }
 
         decorationCategories[categoryId] = decorationCategories[categoryId].concat(data);
@@ -148,12 +152,36 @@ function getGameDresses(decorationIds = []) {
 
     for (const id of decorationIds) {
         const info = getDressInfo(id);
-        if (!info || !dressesGameType[info.typeId]) continue;
+        if (!info) {
+            // Could not find dress info
+            logger.warn(`Dress info missing for ID: ${id}`);
+            continue;
+        }
+
+        if (!dressesGameType[info.typeId]) {
+            logger.warn(`No game type mapping for typeId: ${info.typeId} (ID: ${id})`);
+            continue;
+        }
 
         const key = dressesGameType[info.typeId];
-        skin[key] = (info.typeId === 6)
-            ? info.resourceId
-            : info.resourceId.split(".")[1]; // Strip filename prefix
+        if (!info.resourceId || typeof info.resourceId !== "string") {
+            logger.warn(`Missing or invalid resourceId for dress ID: ${id}`);
+            continue;
+        }
+
+        if (info.typeId === 6) {
+            // skin_color uses full resourceId
+            skin[key] = info.resourceId;
+        } else {
+            const parts = info.resourceId.split(".");
+            if (parts.length > 1 && parts[1]) {
+                skin[key] = parts[1];
+            } else {
+                // fallback to full resourceId if splitting fails
+                logger.warn(`Unexpected resourceId format for dress ID: ${id}, resourceId: ${info.resourceId}`);
+                skin[key] = info.resourceId;
+            }
+        }
     }
 
     return skin;

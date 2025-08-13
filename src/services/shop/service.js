@@ -14,8 +14,10 @@ const decorationServiceBase = require("@decoration-service/base");
 
 async function getDressList(userId, categoryId, currencyType, pageNo, pageSize) {
     const userInfo = await User.fromUserId(userId);
+    if (!userInfo) return responses.userNotFound();
+
     const ownedDresses = await decorationServiceBase.getOwnedDresses(userId);
-    
+
     const dressesData = dressing.getDresses(new DressOptions({
         categoryId: categoryId, 
         currency: currencyType,
@@ -32,6 +34,8 @@ async function getDressList(userId, categoryId, currencyType, pageNo, pageSize) 
 
 async function buyDresses(userId, decorationIds) {
     const vip = await Vip.fromUserId(userId);
+    if (!vip) return responses.userNotFound();
+
     const purchaseResults = {};
     const purchasedDresses = [];
 
@@ -44,8 +48,9 @@ async function buyDresses(userId, decorationIds) {
 
         // Discount logic
         let discount = 0;
-        if (vip.getLevel() === VipLevels.VIP_PLUS) discount = discounts.vipShopDiscount;
-        else if (vip.getLevel() === VipLevels.MVP) discount = discounts.mvpShopDiscount;
+        const vipLevel = vip.getLevel();
+        if (vipLevel === VipLevels.VIP_PLUS) discount = discounts.vipShopDiscount;
+        else if (vipLevel === VipLevels.MVP) discount = discounts.mvpShopDiscount;
 
         const actualPrice = Math.floor(dressInfo.price * (100 - discount) / 100);
 
@@ -59,13 +64,14 @@ async function buyDresses(userId, decorationIds) {
         purchaseResults[decorationId] = !hasFailed;
 
         if (!hasFailed) {
-            // ✅ Use `dressInfo.id` — not `decorationId`, in case it differs
+            // Use dressInfo.id, not decorationId, in case they differ
             purchasedDresses.push(dressInfo.id);
         }
     }
 
-    // ✅ Always await
-    await decorationServiceBase.addDresses(userId, purchasedDresses);
+    if (purchasedDresses.length > 0) {
+        await decorationServiceBase.addDresses(userId, purchasedDresses);
+    }
 
     return responses.success({
         decorationPurchaseStatus: purchaseResults
@@ -84,7 +90,9 @@ async function buyGame(userId, gameId) {
 
 async function getPagedDressList(userId, categoryId, currencyType, pageNo, pageSize) {
     const userInfo = await User.fromUserId(userId);
-    const ownedDresses = await decorationServiceBase.getOwnedDresses();
+    if (!userInfo) return responses.userNotFound();
+
+    const ownedDresses = await decorationServiceBase.getOwnedDresses(userId);
 
     const dressesData = dressing.getDresses(new DressOptions({
         categoryId: categoryId, 
@@ -96,13 +104,15 @@ async function getPagedDressList(userId, categoryId, currencyType, pageNo, pageS
         ownerType: DressOwnerTypes.TAG_ITEM
     }));
 
-    return responses.success(new Page(pageNo, pageSize, dressesData));
+    const pagedData = new Page(dressesData, dressesData.length, pageNo, pageSize);
+
+    return responses.success(pagedData);
 }
 
 module.exports = {
-    getDressList: getDressList,
-    buyDresses: buyDresses,
-    buyGameProp: buyGameProp,
-    buyGame: buyGame,
-    getPagedDressList: getPagedDressList
-}
+    getDressList,
+    buyDresses,
+    buyGameProp,
+    buyGame,
+    getPagedDressList
+};

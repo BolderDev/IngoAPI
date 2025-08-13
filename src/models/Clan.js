@@ -4,6 +4,10 @@ const ClanRoles = require("@constants/ClanRoles");
 const ClanMember = require("@models/ClanMember");
 const Page = require("@models/Page");
 
+function escapeRegex(str) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
 module.exports = class Clan {
   constructor(clanId, chiefId = null) {
     this.clanId = clanId;
@@ -23,8 +27,8 @@ module.exports = class Clan {
   }
 
   static fromJson(json) {
-    const c = new Clan(json.clanId, json.chiefId);
-    Object.assign(c, json);
+    const c = new Clan(json?.clanId ?? null, json?.chiefId ?? null);
+    Object.assign(c, { ...c, ...json }); // keep defaults if missing
     return c;
   }
 
@@ -34,14 +38,14 @@ module.exports = class Clan {
   }
 
   static async exists(clanId) {
-    const doc = await Model.findOne({ modelName: "Clan", "data.clanId": clanId });
-    return !!doc;
+    return !!(await Model.findOne({ modelName: "Clan", "data.clanId": clanId }));
   }
 
   static async search(clanId, query, pageNo, pageSize) {
+    const safeQuery = escapeRegex(query);
     const docs = await Model.find({
       modelName: "Clan",
-      "data.name": { $regex: `^${query}`, $options: "i" },
+      "data.name": { $regex: `^${safeQuery}`, $options: "i" },
       "data.clanId": { $ne: clanId }
     });
 
@@ -55,15 +59,33 @@ module.exports = class Clan {
     return new Page(pagedClans, totalSize, pageNo, pageSize);
   }
 
-  async addMember(userId, role) {
-    const member = new ClanMember(userId);
-    member.setClanId(this.clanId);
-    member.setRole(role);
-    await member.save();
+    async addMember(userId, role) {
+      const exists = await ClanMember.fromUserId(userId);
 
-    this.memberCount++;
-    await this.save();
-  }
+      // If they’re in another clan, remove them first
+      if (exists && exists.getClanId() !== this.clanId) {
+        await exists.delete();
+      } else if (exists && exists.getClanId() === this.clanId) {
+        return; // already in this clan
+      }
+
+      const member = new ClanMember(userId);
+      member.setClanId(this.clanId);
+      member.setRole(role);
+
+      // Add all required display fields
+      member.setExperience(0);
+      member.setCurrentGold(0);
+      member.setCurrentDiamond(0);
+      member.setLastDonationDate(null);
+      member.setNickName(await this.fetchUserName(userId)); // fetch from user service
+      member.setProfilePic(await this.fetchUserPic(userId));
+
+      await member.save();
+
+      this.memberCount++;
+      await this.save();
+    }
 
   async removeMember(userId) {
     const member = await ClanMember.fromUserId(userId);
@@ -71,11 +93,12 @@ module.exports = class Clan {
 
     await member.delete();
     this.memberCount = Math.max(0, this.memberCount - 1);
+    this.currentCount = Math.max(0, this.currentCount - 1);
     await this.save();
     return true;
   }
 
-  async getMembers(onlyAuthorities) {
+  async getMembers(onlyAuthorities = false) {
     const docs = await Model.find({ modelName: "ClanMember", "data.clanId": this.clanId });
 
     const filtered = docs
@@ -85,14 +108,20 @@ module.exports = class Clan {
         return !onlyAuthorities || role > ClanRoles.MEMBER;
       });
 
-    const result = [];
-    for (const m of filtered) {
-      const member = ClanMember.fromJson(m);
-      const info = await member.getInfo();
-      if (info) result.push(info);
-    }
+    // Ensure every member has at least basic info
+    const members = await Promise.all(
+      filtered.map(async (m) => {
+        try {
+          const cm = ClanMember.fromJson(m);
+          const info = await cm.getInfo();
+          return info || { userId: m.userId, role: m.role, nickName: m.nickName || "Unknown" };
+        } catch (err) {
+          return { userId: m.userId, role: m.role, nickName: "Unknown" };
+        }
+      })
+    );
 
-    return result;
+    return members;
   }
 
   async getElderCount() {
@@ -104,17 +133,20 @@ module.exports = class Clan {
     return docs.length;
   }
 
-  addExperience(experience) {
-    this.experience += experience;
+  addExperience(exp) {
+    this.experience += exp;
 
-    const config = clanConfig.levels[this.level];
-    if (config?.upgradeExperience != null && this.experience >= config.upgradeExperience) {
-      this.level += 1;
-      if (this.level > 9) {
-        this.level = 9;
-      } else {
-        this.experience -= config.upgradeExperience;
-      }
+    while (true) {
+      const config = clanConfig.levels[this.level];
+      if (config?.upgradeExperience != null && this.experience >= config.upgradeExperience) {
+        this.level = Math.min(this.level + 1, 9);
+        if (this.level < 9) {
+          this.experience -= config.upgradeExperience;
+        } else {
+          this.experience = Math.min(this.experience, clanConfig.levels[9]?.upgradeExperience ?? this.experience);
+          break;
+        }
+      } else break;
     }
   }
 
@@ -123,20 +155,30 @@ module.exports = class Clan {
   }
 
   async save() {
+    const plainData = JSON.parse(JSON.stringify(this));
     await Model.findOneAndUpdate(
       { modelName: "Clan", "data.clanId": this.clanId },
-      { modelName: "Clan", data: this },
+      { modelName: "Clan", data: plainData },
       { upsert: true, new: true }
     );
   }
 
   async delete() {
     await Model.deleteOne({ modelName: "Clan", "data.clanId": this.clanId });
+    await Model.deleteMany({ modelName: "ClanMember", "data.clanId": this.clanId });
+  }
 
-    const members = await Model.find({ modelName: "ClanMember", "data.clanId": this.clanId });
-    for (const m of members) {
-      await Model.deleteOne({ modelName: "ClanMember", "data.userId": m.data.userId });
-    }
+  async logAction(action, userId) {
+    // Optional audit log for clan actions
+    await Model.create({
+      modelName: "ClanLog",
+      data: {
+        clanId: this.clanId,
+        action,
+        userId,
+        timestamp: Date.now()
+      }
+    });
   }
 
   response(shownMembers) {

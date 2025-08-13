@@ -1,13 +1,20 @@
 const express = require("express");
 const router = express.Router();
 const Model = require("@schemas/model");
-const  userServiceBase  = require("@user-service/base");
+const userServiceBase = require("@user-service/base");
 
-router.use(express.urlencoded({ extended: true }));
-router.use(express.json());
+// Escape HTML to prevent XSS
+function escapeHtml(str) {
+  return String(str || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
 
 function renderMainPage(docs, currentQuery = "") {
-    let html = `
+  let html = `
     <html>
     <head>
         <title>MongoDB Model Viewer</title>
@@ -77,28 +84,29 @@ function renderMainPage(docs, currentQuery = "") {
     <body>
         <h1>📦 MongoDB Model Viewer</h1>
         <form class="search-bar" method="GET" action="/database/schemas/search">
-            <input type="text" name="query" placeholder="Search userId, modelName, or _id" value="${currentQuery}" />
+            <input type="text" name="query" placeholder="Search userId, modelName, or _id" value="${escapeHtml(currentQuery)}" />
         </form>
     `;
 
-    for (const doc of docs) {
-        const preview = JSON.stringify(doc, null, 2);
-        const userId = doc.userId || "-";
-        const modelName = doc.modelName || "Unknown";
+  for (const doc of docs) {
+    const preview = escapeHtml(JSON.stringify(doc, null, 2));
+    const userId = escapeHtml(doc.userId ?? "-");
+    const modelName = escapeHtml(doc.modelName ?? "Unknown");
+    const id = escapeHtml(doc._id);
 
-        html += `
+    html += `
         <div class="item">
             <strong>User ID:</strong> ${userId}<br/>
             <strong>Model:</strong> ${modelName}<br/>
-            <strong>_id:</strong> ${doc._id}<br/>
+            <strong>_id:</strong> ${id}<br/>
             <pre>${preview}</pre>
 
             <div class="controls">
                 <form method="POST" action="/database/schemas/delete" style="display:inline;">
-                    <input type="hidden" name="id" value="${doc._id}" />
+                    <input type="hidden" name="id" value="${id}" />
                     <button type="submit" class="delete" onclick="return confirm('Delete this model?')">❌ Delete</button>
                 </form>
-                <a class="edit" href="/database/schemas/edit/${doc._id}">✏️ Edit</a>
+                <a class="edit" href="/database/schemas/edit/${id}">✏️ Edit</a>
             </div>
 
             <form method="POST" action="/database/schemas/ban" class="ban-form">
@@ -109,18 +117,20 @@ function renderMainPage(docs, currentQuery = "") {
             </form>
         </div>
         `;
-    }
+  }
 
-    html += `</body></html>`;
-    return html;
+  html += `</body></html>`;
+  return html;
 }
 
 function renderEditPage(doc) {
-    const json = JSON.stringify(doc, null, 2);
-    return `
+  const json = escapeHtml(JSON.stringify(doc, null, 2));
+  const id = escapeHtml(doc._id);
+
+  return `
     <html>
     <head>
-        <title>Edit ${doc._id}</title>
+        <title>Edit ${id}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css" />
         <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
@@ -165,9 +175,9 @@ function renderEditPage(doc) {
         </style>
     </head>
     <body>
-        <h1>📝 Editing Document:<br>${doc._id}</h1>
+        <h1>📝 Editing Document:<br>${id}</h1>
         <form method="POST" action="/database/schemas/edit">
-            <input type="hidden" name="id" value="${doc._id}" />
+            <input type="hidden" name="id" value="${id}" />
             <textarea id="editor" name="json">${json}</textarea>
             <button type="submit">💾 Save</button>
         </form>
@@ -187,46 +197,76 @@ function renderEditPage(doc) {
     </html>
     `;
 }
+
 // Routes
 router.get("/database/schemas", async (req, res) => {
+  try {
     const docs = await Model.find({}).limit(300).lean();
     res.send(renderMainPage(docs));
+  } catch (err) {
+    res.status(500).send("Internal Server Error");
+  }
 });
 
 router.get("/database/schemas/search", async (req, res) => {
-    const q = (req.query.query || "").toLowerCase();
-    const docs = await Model.find({}).limit(300).lean();
-    const filtered = docs.filter(doc => {
-        const userId = (doc.userId || "").toString().toLowerCase();
-        const modelName = (doc.modelName || "").toLowerCase();
-        const id = (doc._id || "").toString().toLowerCase();
-        return userId.includes(q) || modelName.includes(q) || id.includes(q);
-    });
-    res.send(renderMainPage(filtered, req.query.query));
+  try {
+    const q = req.query.query || "";
+    const regex = new RegExp(q, "i");
+
+    const docs = await Model.find({
+      $or: [
+        { userId: { $regex: regex } },
+        { modelName: { $regex: regex } },
+        { _id: { $regex: regex } },
+      ],
+    })
+      .limit(300)
+      .lean();
+
+    res.send(renderMainPage(docs, q));
+  } catch (err) {
+    res.status(500).send("Internal Server Error");
+  }
 });
 
 router.post("/database/schemas/delete", async (req, res) => {
+  try {
     await Model.deleteOne({ _id: req.body.id });
     res.redirect("/database/schemas");
+  } catch (err) {
+    res.status(500).send("Internal Server Error");
+  }
 });
 
 router.get("/database/schemas/edit/:id", async (req, res) => {
+  try {
     const doc = await Model.findById(req.params.id).lean();
     if (!doc) return res.status(404).send("Document not found");
     res.send(renderEditPage(doc));
+  } catch (err) {
+    res.status(500).send("Internal Server Error");
+  }
 });
 
 router.post("/database/schemas/edit", async (req, res) => {
-        const data = JSON.parse(req.body.json);
-        delete data._id;
-        await Model.updateOne({ _id: req.body.id }, { $set: data });
-       res.redirect("/database/schemas");
+  try {
+    const data = JSON.parse(req.body.json);
+    delete data._id;
+    await Model.updateOne({ _id: req.body.id }, { $set: data });
+    res.redirect("/database/schemas");
+  } catch (err) {
+    res.status(500).send("Internal Server Error");
+  }
 });
 
 router.post("/database/schemas/ban", async (req, res) => {
-        const { userId, stopToTime, stopReason } = req.body;
-        await userServiceBase.setBanUser(userId, stopToTime, stopReason);
-        res.redirect("/database/schemas");
+  try {
+    const { userId, stopToTime, stopReason } = req.body;
+    await userServiceBase.setBanUser(userId, stopToTime, stopReason);
+    res.redirect("/database/schemas");
+  } catch (err) {
+    res.status(500).send("Internal Server Error");
+  }
 });
 
 module.exports = router;

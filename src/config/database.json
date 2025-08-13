@@ -10,10 +10,10 @@
         "connectionLimit": 30
     },
     "redis": {
-        "username": "test",
-        "password": "AS9bAAIjcDE2MzA4NDExNTkyYTE0ZWIwYWMzZWU1ZjUyNjI5ZDE4N3AxMA",
+        "username": "InfinityGO",
+        "password": "AbrXAAIjcDE5YzdjZDU1MmQ3NmU0ZWMxYWI1YmI3MDU5Mjk2MGU3NXAxMA",
         "socket": {
-             "host": "rediss://default:AS9bAAIjcDE2MzA4NDExNTkyYTE0ZWIwYWMzZWU1ZjUyNjI5ZDE4N3AxMA@driven-haddock-12123.upstash.io:6379",
+             "host": "rediss://default:AbrXAAIjcDE5YzdjZDU1MmQ3NmU0ZWMxYWI1YmI3MDU5Mjk2MGU3NXAxMA@fast-ferret-47831.upstash.io:6379",
             "port": 6379
         }
     }

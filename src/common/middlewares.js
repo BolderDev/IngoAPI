@@ -5,51 +5,66 @@ const responses = require("@common/responses");
 const User = require("@models/User");
 
 async function userAuthentication(request) {
-    // Helper to parse userId from headers
-    request.getUserId = () => {
-        return parseInt(request.headers["userid"]);
-    };
+  // Helper to parse userId as number
+  request.getUserId = () => {
+    const id = Number(request.headers["userid"]);
+    return isNaN(id) ? null : id;
+  };
 
-    const userId = request.getUserId();
-    const accessToken = request.headers["access-token"];
+  const userId = request.getUserId();
+  const accessToken = request.headers["access-token"];
 
-    // Check if required headers exist
-    if (!userId || !accessToken) {
-        return { hasSucceeded: false, response: responses.requiresUserAuthParams() };
-    }
+  if (!userId || !accessToken) {
+    return { hasSucceeded: false, response: responses.requiresUserAuthParams() };
+  }
 
-    // Fetch account by userId
-    const account = await Account.fromUserId(userId);
+  let account;
+  try {
+    account = await Account.fromUserId(userId);
+  } catch (err) {
+    // Log error if you want: console.error(err);
+    return { hasSucceeded: false, response: responses.authFailed() };
+  }
 
-    if (!account) {
-        // No account found for userId
-        return { hasSucceeded: false, response: responses.authFailed() };
-    }
+  if (!account) {
+    return { hasSucceeded: false, response: responses.authFailed() };
+  }
 
-    // Verify access token against account's stored token
-    const { isValid } = webtoken.verify(accessToken, account.getAccessToken());
+  const { isValid } = webtoken.verify(accessToken, account.getAccessToken());
 
-    if (!isValid) {
-        return { hasSucceeded: false, response: responses.authFailed() };
-    }
+  if (!isValid) {
+    return { hasSucceeded: false, response: responses.authFailed() };
+  }
 
-    return { hasSucceeded: true };
+  // Attach user info for downstream use
+  request.user = { id: userId, account };
+
+  return { hasSucceeded: true };
 }
 
 async function checkForUserProfile(request) {
-    const userId = request.getUserId();
+  const userId = request.getUserId();
 
-    // Check if user profile exists
-    const isUserExists = await User.exists(userId);
+  if (!userId) {
+    return { hasProfile: false, response: responses.profileNotExists() };
+  }
 
-    if (!isUserExists) {
-        return { hasProfile: false, response: responses.profileNotExists() };
-    }
+  let isUserExists;
+  try {
+    isUserExists = await User.exists(userId);
+  } catch (err) {
+    // Optionally log error
+    return { hasProfile: false, response: responses.profileNotExists() };
+  }
 
-    return { hasProfile: true };
+  if (!isUserExists) {
+    return { hasProfile: false, response: responses.profileNotExists() };
+  }
+
+  return { hasProfile: true };
 }
 
 module.exports = {
-    userAuthentication,
-    checkForUserProfile
+  userAuthentication,
+  checkForUserProfile
 };

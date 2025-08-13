@@ -89,7 +89,7 @@ function resetDonationCache() {
   if (!options.testResetDate && !options.dateReset) return;
 
   if (options.testResetDate) {
-    setInterval(resetDonationCache, 60 * 1000);
+    setInterval(resetDonationCache, 80000 * 1000);
     console.log("[ClanDonation] ⏱ Test reset every 1 min enabled");
   }
 

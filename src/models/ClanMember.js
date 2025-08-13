@@ -15,9 +15,9 @@ module.exports = class ClanMember {
   }
 
   static fromJson(json) {
-    const m = new ClanMember(json.userId);
-    Object.assign(m, json);
-    return m;
+    const cm = new ClanMember(json?.userId ?? null);
+    Object.assign(cm, json); // ensures clanId, role, etc. are set
+    return cm;
   }
 
   toJson() {
@@ -32,9 +32,25 @@ module.exports = class ClanMember {
     };
   }
 
+  // Always returns the record if it exists (for clan listing, profile, etc.)
   static async fromUserId(userId) {
-    const doc = await Model.findOne({ modelName: "ClanMember", "data.userId": userId });
+    const doc = await Model.findOne({
+      modelName: "ClanMember",
+      "data.userId": userId
+    });
     return doc ? ClanMember.fromJson(doc.data) : new ClanMember(userId);
+  }
+
+  // Returns "blank" if user is not in clan (for join checks)
+  static async fromUserIdForJoin(userId) {
+    const doc = await Model.findOne({
+      modelName: "ClanMember",
+      "data.userId": userId
+    });
+    if (!doc || !doc.data.clanId || doc.data.clanId === 0) {
+      return new ClanMember(userId);
+    }
+    return ClanMember.fromJson(doc.data);
   }
 
   async getInfo() {

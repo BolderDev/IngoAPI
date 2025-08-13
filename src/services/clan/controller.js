@@ -29,13 +29,26 @@ async function createClan(request) {
 }
 
 async function getClanMembers(request) {
-    return await service.getClanMembers(request.getUserId());
+    const clanId = request.query.clanId
+        ? parseInt(request.query.clanId)
+        : request.getUserId();
+    return await service.getClanMembers(clanId);
 }
 
 async function sendClanRequest(request) {
-    return await service.sendClanRequest(request.getUserId(),
-                                         parseInt(request.body.clanId),
-                                         request.body.msg);
+    const clanId = request.body.clanId
+        ? parseInt(request.body.clanId)
+        : parseInt(request.query.clanId);
+
+    if (!clanId) {
+        throw new Error("Missing clanId in request.");
+    }
+
+    return await service.sendClanRequest(
+        request.getUserId(),
+        clanId,
+        request.body.msg || request.query.msg || ""
+    );
 }
 
 async function setMemberRole(request) {
@@ -77,7 +90,7 @@ async function acceptClanRequest(request) {
 }
 
 async function rejectClanRequest(request) {
-    return await service.acceptClanRequest(request.getUserId(),
+    return await service.rejectClanRequest(request.getUserId(),
                                            parseInt(request.query.otherId));
 }
 

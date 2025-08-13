@@ -13,29 +13,50 @@ module.exports = class Activity {
         this.currentSignInDay = 0;
     }
 
-    /** @returns {Promise<Activity|null>} */
+    /** 
+     * Load Activity for userId or return null if not found 
+     * @returns {Promise<Activity|null>} 
+     */
     static async fromUserId(userId) {
         const row = await mongooseModel.findFirst("activity", { userId });
         if (!row) return null;
+
         const act = new Activity(userId);
-        Object.assign(act, row);
+
+        // Assign properties, fallback defaults if undefined
+        act.freeWheel = row.freeWheel ?? 0;
+        act.moneyClaimed = row.moneyClaimed ?? false;
+        act.luckDiamonds = row.luckDiamonds ?? 0;
+        act.luckGold = row.luckGold ?? 0;
+        act.blockDiamonds = row.blockDiamonds ?? 0;
+        act.blockGold = row.blockGold ?? 0;
+        act.signInDay = row.signInDay ?? 0;
+        act.currentSignInDay = row.currentSignInDay ?? 0;
+
         return act;
     }
 
+    /**
+     * Save the current Activity instance to DB (upsert)
+     */
     async save() {
-        await mongooseModel.insertOrUpdate("activity", { userId: this.userId }, {
-            freeWheel: this.freeWheel,
-            moneyClaimed: this.moneyClaimed,
-            luckDiamonds: this.luckDiamonds,
-            luckGold: this.luckGold,
-            blockDiamonds: this.blockDiamonds,
-            blockGold: this.blockGold,
-            signInDay: this.signInDay,
-            currentSignInDay: this.currentSignInDay
-        });
+        await mongooseModel.insertOrUpdate(
+            "activity", 
+            { userId: this.userId },
+            {
+                freeWheel: this.freeWheel,
+                moneyClaimed: this.moneyClaimed,
+                luckDiamonds: this.luckDiamonds,
+                luckGold: this.luckGold,
+                blockDiamonds: this.blockDiamonds,
+                blockGold: this.blockGold,
+                signInDay: this.signInDay,
+                currentSignInDay: this.currentSignInDay
+            }
+        );
     }
 
-    // Getters / Setters
+    // Getters and setters
     setUserId(userId) { this.userId = userId; }
     getUserId() { return this.userId; }
 

@@ -1,72 +1,72 @@
 module.exports = class DressOptions {
-    constructor(options) {
-        this.categoryId = options.categoryId;
-        this.sex = options.sex;
-        this.currency = options.currency;
-        this.hideClanDresses = options.hideClanDresses;
-        this.hideFreeDresses = options.hideFreeDresses;
-        this.ownerFilter = options.ownerFilter;
-        this.ownerType = options.ownerType;
-        this.usingFilter = options.usingFilter;
+    constructor(options = {}) {
+        this._categoryId = options.categoryId ?? null;
+        this._sex = options.sex ?? 0;
+        this._currency = options.currency ?? 0;
+        this._hideClanDresses = options.hideClanDresses ?? false;
+        this._hideFreeDresses = options.hideFreeDresses ?? false;
+        this._ownerFilter = options.ownerFilter ?? [];
+        this._ownerType = options.ownerType ?? 0;
+        this._usingFilter = options.usingFilter ?? [];
     }
 
     // Owner Types
     // 1 - STRICT: Strictly filters dresses from the ownerFilter array (No other dresses will be filtered regardless of the options)
     // 2 - TAG_ITEM: Tags dresses from the ownerFilter array with the 'hasPurchases' property set to 1
 
-    setCategoryId(categoryId) {
-        this.categoryId = categoryId;
+    get categoryId() {
+        return this._categoryId;
+    }
+    set categoryId(value) {
+        this._categoryId = value;
     }
 
-    getCategoryId() {
-        return this.categoryId;
+    get sex() {
+        return this._sex;
+    }
+    set sex(value) {
+        this._sex = value;
     }
 
-    setSex(sex) {
-        this.sex = sex;
+    get currency() {
+        return this._currency;
+    }
+    set currency(value) {
+        this._currency = value;
     }
 
-    getSex() {
-        return this.sex;
+    get hideClanDresses() {
+        return this._hideClanDresses;
+    }
+    set hideClanDresses(value) {
+        this._hideClanDresses = value;
     }
 
-    setCurrency(currency) {
-        this.currency = currency;
+    get hideFreeDresses() {
+        return this._hideFreeDresses;
+    }
+    set hideFreeDresses(value) {
+        this._hideFreeDresses = value;
     }
 
-    getCurrency() {
-        return this.currency;
+    get ownerFilter() {
+        return this._ownerFilter;
+    }
+    set ownerFilter(value) {
+        this._ownerFilter = Array.isArray(value) ? value : [];
     }
 
-    setHideClanDresses(hideClanDresses) {
-        this.hideClanDresses = hideClanDresses;
+    get ownerType() {
+        return this._ownerType;
+    }
+    set ownerType(value) {
+        this._ownerType = value;
     }
 
-    getHideClanDresses() {
-        return this.hideClanDresses;
+    get usingFilter() {
+        return this._usingFilter;
     }
-
-    setHideFreeDresses(hideFreeDresses) {
-        this.hideFreeDresses = hideFreeDresses;
-    }
-
-    getHideFreeDresses() {
-        return this.hideFreeDresses;
-    }
-
-    setOwnerFilter(ownerFilter) {
-        this.ownerFilter = ownerFilter;
-    }
-
-    getOwnerFilter() {
-        return this.ownerFilter;
-    }
-
-    setUsingFilter(usingFilter) {
-        this.usingFilter = usingFilter;
-    }
-
-    getUsingFilter() {
-        return this.usingFilter;
+    set usingFilter(value) {
+        this._usingFilter = Array.isArray(value) ? value : [];
     }
 }

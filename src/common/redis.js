@@ -7,7 +7,7 @@ var client = null;
 
 function init() {
   client = redis.createClient({
-  url: "rediss://default:AUT8AAIjcDE3YmI0ZjAxZjdmYjU0MDA5YjMwMGIwZTU1OTMxNGY2NXAxMA@advanced-gnu-17660.upstash.io:6379"
+  url: "rediss://default:AbrXAAIjcDE5YzdjZDU1MmQ3NmU0ZWMxYWI1YmI3MDU5Mjk2MGU3NXAxMA@fast-ferret-47831.upstash.io:6379"
 });
   //client = redis.createClient(dbConfig["redis"]);
 

@@ -5,15 +5,16 @@ async function getNextId(type, step, start) {
 
   const result = await Model.findOneAndUpdate(
     { modelName },
-    { $inc: { "data.value": step } },
-    { upsert: true, new: true, setDefaultsOnInsert: true }
+    {
+      $inc: { "data.value": step },
+      $setOnInsert: { "data.value": start }
+    },
+    {
+      upsert: true,
+      new: true,
+      setDefaultsOnInsert: true
+    }
   );
-
-  if (result.data?.value === step) {
-    // First time creation, set to start + step
-    result.data.value = start + step;
-    await result.save();
-  }
 
   return result.data.value;
 }
