@@ -1,8 +1,6 @@
 // --- Inline Environment Variables ---
 process.env.MONGO_URI = "mongodb+srv://shaurya:ballsandtits@cluster0.kmcqt9s.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
-process.env.API_PORT = "3000"; // change to your desired port
-process.env.REDIS_HOST = "127.0.0.1";
-process.env.REDIS_PORT = "6379";
+
 process.env.REDIS_URL = "rediss://default:AbrXAAIjcDE5YzdjZDU1MmQ3NmU0ZWMxYWI1YmI3MDU5Mjk2MGU3NXAxMA@fast-ferret-47831.upstash.io:6379";
 
 // --- Imports ---
